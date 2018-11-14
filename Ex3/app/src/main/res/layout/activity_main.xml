@@ -15,6 +15,7 @@
         android:layout_marginLeft="28dp"
         android:layout_marginTop="52dp"
         android:text="House of Stark"
+        android:textColor="@color/colorAccent"
         android:typeface="serif"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -28,6 +29,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:text="House of Lannister"
+        android:textColor="@color/colorAccent"
         android:typeface="serif"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -38,6 +40,7 @@
         android:layout_height="69dp"
         android:layout_marginTop="164dp"
         android:text="Game Of Thrones"
+        android:textColor="@color/colorAccent"
         android:textSize="40sp"
         app:fontFamily="cursive"
         app:layout_constraintEnd_toEndOf="parent"

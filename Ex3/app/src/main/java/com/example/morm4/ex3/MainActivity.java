@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         StarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), StarkActivity.class);
+                Intent intent = new Intent(v.getContext(),StarkActivity.class);
                 startActivity(intent);
 
             }

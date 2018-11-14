@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".StarkActivity" />
-        <activity android:name=".LannisterActivity"></activity>
+        <activity android:name=".LannisterActivity" />
+        <activity android:name=".CharViewHolder"></activity>
     </application>
 
 </manifest>
