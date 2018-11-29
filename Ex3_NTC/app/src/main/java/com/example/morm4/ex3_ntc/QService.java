@@ -2,18 +2,24 @@ package com.example.morm4.ex3_ntc;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 
-public class QService extends IntentService {
+public class QService extends JobIntentService {
 
-    public static final String ACTION = "com.example.morm4.ex3_ntc.action";
-    public static final long TIME_SEC = 1000 * 15;
+    public static final String ACTION_INIT = "com.example.morm4.ex3_ntc.action.ACTION_INIT";
+    public static final String ACTION_START = "com.example.morm4.ex3_ntc.action.ACTION_START";
+    public static final long TIME_SEC = 100*5;
+    public static final int JOB_ID =1;
     public static final String[] DATA_QUOTES=
                     {"I used to think I was indecisive, but now I'm not too sure.",
                     "Doing nothing is hard, you never know when you're done.",
@@ -38,44 +44,66 @@ public class QService extends IntentService {
 
 
     public static AlarmManager AManager;
-    public static NotificationManagerCompat ntcManager;
-    public static int id = 0;
+    private static int id = 0;
 
 
-    public QService() {
-        super("qService");}
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, QService.class, JOB_ID, work);
+    }
 
-    public static void doAction(Context context) {
+    //initial the service, called by the mainActivity
+    public static void initService(Context context) {
         Intent intent = new Intent(context, QService.class);
-        intent.setAction(ACTION);
-        context.startService(intent);
+        intent.setAction(ACTION_INIT);
+        enqueueWork(context, intent);
+    }
+    //called by the broadcast receiver
+    public static void startService(Context context) {
+        Intent intent = new Intent(context, QService.class);
+        intent.setAction(ACTION_START);
+        enqueueWork(context, intent);
 
     }
+    //check if intent
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleWork(Intent intent) {
+
         if (intent != null) {
             final String action = intent.getAction();
-            if (ACTION.equals(action)) {
-                handleAction();
+            if (ACTION_INIT.equals(action)) {
+                    wakeAlarm();
+                    handleAction();
             } else {
-                throw new RuntimeException("Unknown action provided");
+                    if (ACTION_START.equals(action)) {
+                        handleAction();
+
+                    }else{throw new RuntimeException("Unknown action provided");}
             }
         }
+
     }
-    private void handleAction() {
-
+    private void wakeAlarm (){
         Intent intent = new Intent(this, QReceiver.class);
-        AManager =(AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        AManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         AManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), TIME_SEC, PendingIntent.getBroadcast(this, 0, intent, 0));
+        registerNotificationChannel();
+    }
 
+    private void handleAction() {
         String display = DATA_QUOTES[(id % DATA_QUOTES.length)];
-        NotificationCompat.Builder builder = new NotificationCompat.Builder (this)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder (this, "1")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(display)
                 .setAutoCancel(false)
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
+                .setPriority(NotificationCompat.PRIORITY_MAX);
 
-        ntcManager = NotificationManagerCompat.from(this);
+        NotificationManagerCompat ntcManager = NotificationManagerCompat.from(this);
         ntcManager.notify(++id , builder.build());
+    }
+    protected void registerNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager nm = getSystemService(NotificationManager.class);
+            nm.createNotificationChannel(new NotificationChannel("1", "1", NotificationManager.IMPORTANCE_HIGH));
+        }
     }
 }

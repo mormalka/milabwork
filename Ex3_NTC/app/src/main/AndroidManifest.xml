@@ -17,14 +17,17 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".QService"
-            android:exported="false" />
+        <service android:name=".QService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <receiver
             android:name=".QReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.morm4.ex3_ntc.startService.ACTION"></action>
+            </intent-filter>
+        </receiver>
 
 
     </application>
