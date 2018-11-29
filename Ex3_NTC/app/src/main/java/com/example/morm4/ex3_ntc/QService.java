@@ -1,7 +1,6 @@
 package com.example.morm4.ex3_ntc;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,8 +17,9 @@ public class QService extends JobIntentService {
 
     public static final String ACTION_INIT = "com.example.morm4.ex3_ntc.action.ACTION_INIT";
     public static final String ACTION_START = "com.example.morm4.ex3_ntc.action.ACTION_START";
-    public static final long TIME_SEC = 100*5;
-    public static final int JOB_ID =1;
+    public static final long TIME_SEC = 100*10; // every 10 seconds
+    public static final int JOB_ID = 1;
+    public static final String CHANNEL_ID = "1";
     public static final String[] DATA_QUOTES=
                     {"I used to think I was indecisive, but now I'm not too sure.",
                     "Doing nothing is hard, you never know when you're done.",
@@ -77,7 +77,8 @@ public class QService extends JobIntentService {
                     if (ACTION_START.equals(action)) {
                         handleAction();
 
-                    }else{throw new RuntimeException("Unknown action provided");}
+                    }else
+                        {throw new RuntimeException("Unknown action provided");}
             }
         }
 
@@ -91,7 +92,7 @@ public class QService extends JobIntentService {
 
     private void handleAction() {
         String display = DATA_QUOTES[(id % DATA_QUOTES.length)];
-        NotificationCompat.Builder builder = new NotificationCompat.Builder (this, "1")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder (this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(display)
                 .setAutoCancel(false)
@@ -103,7 +104,7 @@ public class QService extends JobIntentService {
     protected void registerNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager nm = getSystemService(NotificationManager.class);
-            nm.createNotificationChannel(new NotificationChannel("1", "1", NotificationManager.IMPORTANCE_HIGH));
+            nm.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "1", NotificationManager.IMPORTANCE_HIGH));
         }
     }
 }
