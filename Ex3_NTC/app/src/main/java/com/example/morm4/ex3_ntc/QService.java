@@ -81,7 +81,6 @@ public class QService extends JobIntentService {
                         {throw new RuntimeException("Unknown action provided");}
             }
         }
-
     }
     private void wakeAlarm (){
         Intent intent = new Intent(this, QReceiver.class);

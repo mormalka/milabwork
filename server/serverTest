@@ -1,0 +1,14 @@
+
+const http = require('http');
+
+let server = http.createServer(function(request,
+ 		response) {
+ response.writeHead(200);
+ let url = request.url;
+ if (url.href != "undefined"){	
+	response.end("http://" + request.headers.host + url + '\n');
+ }
+ response.end();
+
+});
+server.listen(8080);
