@@ -6,11 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-
 import android.app.Application;
 import android.widget.Toast;
-
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -23,15 +20,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String URL = "http://10.0.2.2:3000";
 
     private Socket sSocket;
-    {
-        try {
-            sSocket = IO.socket(URL);
-            Log.d("hello", "Connection Done");
-        } catch (URISyntaxException e) {
-            Log.d("hello", "Unable to connect");
-            throw new RuntimeException(e);
-        }
-    }
 
     String stockType;
     Button sendButt;
@@ -39,6 +27,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        {
+            try {
+                sSocket = IO.socket(URL);
+                Log.d("hello", "Connection Done");
+                sSocket.connect();
+                sSocket.on("connection", sendStock);
+
+            } catch (URISyntaxException e) {
+                Log.d("hello", "Unable to connect");
+                throw new RuntimeException(e);
+            }
+        }
         Toast.makeText(getApplicationContext(),"Live Stock Exchange", Toast.LENGTH_LONG).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -50,41 +51,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 stockType = stock.getText().toString();
+                sSocket.emit("stock type", stockType);
+
 
             }
         });
-        sSocket.on("connection", sendStock);
+
     }
     private Emitter.Listener sendStock = new Emitter.Listener() {
         @Override
-        public void call(Object... args) {
+        public void call(final Object... args) {
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(!stockType.equals("")) {
-                        sSocket.emit("stock type", stockType);
-                        Toast.makeText(getApplicationContext(),
-                                "sending stock type to server", Toast.LENGTH_LONG).show();
+                    JSONObject data = (JSONObject) args[0];
+                    String price;
+                    try {
+                        price = data.getString("price");
+                        Log.d("hello", "server update price");
+                        Toast.makeText(getApplicationContext(),"update", Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        return;
                     }
-                }
-            });
-        }
-    };
+                    }
 
-//        private Emitter.Listener showPrice = new Emitter.Listener() {
-//            @Override
-//            public void call(Object... args) {
-//                JSONObject data = (JSONObject) args[0];
-//
-//                String price;
-//                try {
-//                    price = data.getString("price");
-//                } catch (JSONException e) {
-//                    return;
-//                }
-//            }
-//        };
-
-
+                });
+            }
+        };
     }
-

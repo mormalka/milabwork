@@ -19,9 +19,10 @@ app.use(express.static(__dirname + '/public'));
 
 
 io.on('connection', function (socket) {
+    console.log('The client is on connetion');
     // when the client emits 'stock type', this listens and executes
     socket.on('stock type', function (type) {
-        console.log('io recognize event');
+        console.log('client requested stock type');
         setInterval(() => {
             alpha.data.batch([`${type}`]).then(data => {
             let value = `${data['Stock Quotes'][0]['2. price']}`;
@@ -30,7 +31,7 @@ io.on('connection', function (socket) {
 
             // returns the price value of the selected share subject
 		    socket.broadcast.emit('stock type', { 
-                price : value
+                price: value
             });
 
             }).catch(err => {
