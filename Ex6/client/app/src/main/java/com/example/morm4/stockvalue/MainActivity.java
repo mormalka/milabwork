@@ -33,8 +33,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Client's attempt connecting the server
         try {
             sSocket = IO.socket(URI);
-            Log.d("hello", "Connection Done");
+            Log.d("mess", "Connection Done");
             sSocket.connect();
+            Toast.makeText(getApplicationContext(), "Live Stock Exchange", Toast.LENGTH_LONG).show();
             sSocket.on("stock type", new Emitter.Listener() {
                 @Override
                 public void call(final Object... args) {
@@ -53,16 +54,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             } catch (JSONException e) {
                                 return; }
                         }
-
                     });
                 }
             });
+        } catch (URISyntaxException e) {
+            Log.d("mess", "Unable to connect");
+            throw new RuntimeException(e); }
 
-            } catch (URISyntaxException e) {
-                Log.d("hello", "Unable to connect");
-                throw new RuntimeException(e); }
-
-        Toast.makeText(getApplicationContext(), "Live Stock Exchange", Toast.LENGTH_LONG).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -82,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 sSocket.emit("stock type", stockType);
             }
         });
-
-
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
