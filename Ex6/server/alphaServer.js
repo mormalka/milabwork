@@ -12,10 +12,6 @@ server.listen(port, function () {
 	console.log('Server is listening at port %d', port);
 });
 
-
-app.use(express.static(__dirname + '/public'));
-
-
 io.on('connection', function (socket) {
     console.log('The client is on connetion');
     // when the client emits 'stock type', this listens and executes
@@ -26,9 +22,6 @@ io.on('connection', function (socket) {
             let value = `${data['Stock Quotes'][0]['2. price']}`;
             console.log(`${type} -> ${data['Stock Quotes'][0]['2. price']}`);
             //console.dir(data);
-
-            // returns the price value of the selected share subject
-
 		    io.emit('stock type', { 
                 price: value
             });
@@ -42,6 +35,7 @@ io.on('connection', function (socket) {
 
     });
 });
+
 
 
 
