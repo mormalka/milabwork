@@ -1,5 +1,3 @@
-"use strict";
-
 const ALPHA_KEY = "D35A5OUY1LCXI8UV";
 const alpha = require('alphavantage')({ key: ALPHA_KEY});
 const express = require('express');
@@ -11,7 +9,7 @@ const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
 
 server.listen(port, function () {
-	console.log('Server listening at port %d', port);
+	console.log('Server is listening at port %d', port);
 });
 
 
@@ -30,7 +28,8 @@ io.on('connection', function (socket) {
             //console.dir(data);
 
             // returns the price value of the selected share subject
-		    socket.broadcast.emit('stock type', { 
+
+		    io.emit('stock type', { 
                 price: value
             });
 
