@@ -4,6 +4,8 @@
     <string name="stock_price">Stock price:</string>
     <string name="send">Send</string>
     <string name="select_company_stock">Select company stock</string>
+    <string name="click_here">Click here</string>
+    <string name="is_your_first_time">Is your first time?</string>
     <string-array name="stocks">
         <item>SPY</item>
         <item>AAPL</item>

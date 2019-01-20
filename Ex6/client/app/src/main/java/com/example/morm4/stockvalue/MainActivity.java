@@ -10,6 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -17,11 +21,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.net.URISyntaxException;
 
+import static java.lang.Thread.sleep;
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     public static final String URI = "http://10.0.2.2:3000";
-
+    private final static String TAG = "MainActivity";
     private Socket sSocket;
     Spinner spinner;
     String stockType;
@@ -80,6 +86,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 sSocket.emit("stock type", stockType);
             }
         });
+
+        //FireBase implementation
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
+
+       Button firstTime = (Button) findViewById(R.id.firstTime);
+        firstTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // [START subscribe_topics]
+                FirebaseMessaging.getInstance().subscribeToTopic("news");
+                // [END subscribe_topics]
+
+                // Log and toast
+                String msg1 = "Subscribed to stock updates topic";
+                Log.d(TAG, msg1);
+                Toast.makeText(MainActivity.this, msg1, Toast.LENGTH_SHORT).show();
+
+                String token = FirebaseInstanceId.getInstance().getToken();
+                // Log and toast
+                String msg2 = "Got instanceID Token!";
+                Log.d(TAG, msg2);
+                Toast.makeText(MainActivity.this, msg2, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -88,4 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent){
     }
+
+
+
 }
